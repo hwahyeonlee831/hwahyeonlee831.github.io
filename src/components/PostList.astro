@@ -6,9 +6,11 @@ import FormattedDate from './FormattedDate.astro';
 interface Props {
 	posts: Post[];
 	showCategory?: boolean;
+	// Prefix each row with its series part ("N편").
+	showPart?: boolean;
 }
 
-const { posts, showCategory = true } = Astro.props;
+const { posts, showCategory = true, showPart = false } = Astro.props;
 ---
 
 {
@@ -20,6 +22,7 @@ const { posts, showCategory = true } = Astro.props;
 				<li>
 					<a class="item" href={url(`/posts/${post.id}/`)}>
 						<div class="meta">
+							{showPart && post.data.part !== undefined && <span class="part">{post.data.part}편</span>}
 							{showCategory && (
 								<span class={`cat cat-${post.data.category}`}>{CATEGORIES[post.data.category].label}</span>
 							)}
@@ -69,6 +72,11 @@ const { posts, showCategory = true } = Astro.props;
 		gap: 4px 10px;
 		color: var(--muted);
 		font-size: 0.85rem;
+	}
+	.part {
+		color: var(--primary);
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
 	}
 	h3 {
 		margin: 6px 0 4px;

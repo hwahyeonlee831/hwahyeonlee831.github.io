@@ -26,6 +26,8 @@ const posts = defineCollection({
 			heroImage: image().optional(),
 			// 프로젝트와 연결 (src/content/projects 의 파일명)
 			project: reference('projects').optional(),
+			// 연재 편 번호. 있으면 같은 project 안에서 이 순서로 묶어 "N편"으로 보여 줍니다.
+			part: z.number().int().positive().optional(),
 			// true면 화면에 DRAFT 표시. review/ 폴더의 초안은 이 값과 관계없이 배포되지 않습니다.
 			draft: z.boolean().default(false),
 		}),

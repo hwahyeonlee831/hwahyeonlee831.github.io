@@ -19,6 +19,13 @@ export async function getProjects(): Promise<Project[]> {
 	);
 }
 
+// A project's series: its posts that carry `part`, in part order.
+export function seriesOf(posts: Post[], projectId: string): Post[] {
+	return posts
+		.filter((post) => post.data.project?.id === projectId && post.data.part !== undefined)
+		.sort((a, b) => a.data.part! - b.data.part!);
+}
+
 export function getAllTags(posts: Post[]): [string, number][] {
 	const counts = new Map<string, number>();
 	for (const post of posts) {

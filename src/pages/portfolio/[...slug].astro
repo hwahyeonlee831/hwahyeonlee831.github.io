@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import PostList from '../../components/PostList.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPosts, getProjects, url, type Post, type Project } from '../../lib/content';
+import { getPosts, getProjects, seriesOf, url, type Post, type Project } from '../../lib/content';
 
 export async function getStaticPaths() {
 	const [projects, posts] = await Promise.all([getProjects(), getPosts()]);
@@ -21,6 +21,9 @@ interface Props {
 const { project, related } = Astro.props;
 const { title, description, period, status, role, tools, cover, links, draft } = project.data;
 const { Content } = await render(project);
+// Posts with `part` read as a series, first part first; the rest stay newest-first.
+const series = seriesOf(related, project.id);
+const others = related.filter((post) => post.data.part === undefined);
 ---
 
 <BaseLayout title={title} description={description} image={cover}>
@@ -85,7 +88,19 @@ const { Content } = await render(project);
 					<div class="section-title">
 						<h2>이 프로젝트의 기록</h2>
 					</div>
-					<PostList posts={related} />
+					{series.length > 0 && (
+						<div class="series-guide">
+							<p>
+								전체 <strong>{series.length}편</strong> · 1편부터 순서대로 읽는 것을 권합니다.
+							</p>
+							<a class="button" href={url(`/posts/${series[0].id}/`)}>
+								{series[0].data.part}편부터 읽기 →
+							</a>
+						</div>
+					)}
+					{series.length > 0 && <PostList posts={series} showPart />}
+					{others.length > 0 && series.length > 0 && <h3 class="others-title">그 밖의 기록</h3>}
+					{(others.length > 0 || series.length === 0) && <PostList posts={others} />}
 				</section>
 			)
 		}
@@ -181,5 +196,30 @@ const { Content } = await render(project);
 	}
 	.related {
 		margin-top: 64px;
+	}
+	.series-guide {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px 16px;
+		margin-bottom: 14px;
+	}
+	.series-guide p {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.95rem;
+	}
+	.series-guide strong {
+		color: var(--text);
+		font-variant-numeric: tabular-nums;
+	}
+	.series-guide .button {
+		font-weight: 600;
+	}
+	.others-title {
+		margin: 32px 0 12px;
+		color: var(--muted);
+		font-size: 0.95rem;
 	}
 </style>

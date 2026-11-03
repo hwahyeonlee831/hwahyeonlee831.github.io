@@ -4,28 +4,46 @@ import { getEntry, render } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { CATEGORIES } from '../../consts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPosts, readingMinutes, url, type Post } from '../../lib/content';
+import { getPosts, getProjects, readingMinutes, seriesOf, url, type Post } from '../../lib/content';
 
 export async function getStaticPaths() {
-	const posts = await getPosts();
-	// posts are newest-first, so "newer" is the previous index
-	return posts.map((post, i) => ({
-		params: { slug: post.id },
-		props: { post, newer: posts[i - 1], older: posts[i + 1] },
-	}));
+	const [posts, projects] = await Promise.all([getPosts(), getProjects()]);
+	const visibleProjects = new Set(projects.map((project) => project.id));
+	return posts.map((post, i) => {
+		const projectId = post.data.project?.id;
+		// A post with `part` pages through its series; any other post pages by date.
+		if (post.data.part !== undefined && projectId && visibleProjects.has(projectId)) {
+			const series = seriesOf(posts, projectId);
+			const at = series.indexOf(post);
+			return {
+				params: { slug: post.id },
+				props: { post, newer: series[at + 1], older: series[at - 1], seriesLength: series.length },
+			};
+		}
+		// posts are newest-first, so "newer" is the previous index
+		return {
+			params: { slug: post.id },
+			props: { post, newer: posts[i - 1], older: posts[i + 1] },
+		};
+	});
 }
 
 interface Props {
 	post: Post;
 	newer?: Post;
 	older?: Post;
+	// Set only when the post is part of a visible project's series.
+	seriesLength?: number;
 }
 
-const { post, newer, older } = Astro.props;
-const { title, description, pubDate, updatedDate, category, tags, heroImage, project, draft } = post.data;
+const { post, newer, older, seriesLength } = Astro.props;
+const { title, description, pubDate, updatedDate, category, tags, heroImage, project, part, draft } = post.data;
 const { Content } = await render(post);
 const entry = project ? await getEntry(project) : undefined;
 const linkedProject = entry && (!import.meta.env.PROD || !entry.data.draft) ? entry : undefined;
+const inSeries = seriesLength !== undefined && linkedProject !== undefined;
+const pagerLabel = (other: Post, fallback: string) =>
+	inSeries && other.data.part !== undefined ? `${other.data.part}편` : fallback;
 ---
 
 <BaseLayout title={title} description={description} image={heroImage} type="article">
@@ -37,6 +55,14 @@ const linkedProject = entry && (!import.meta.env.PROD || !entry.data.draft) ? en
 				<span>· {readingMinutes(post.body)}분 읽기</span>
 				{draft && <span class="draft-badge">DRAFT · 배포되지 않음</span>}
 			</div>
+			{
+				inSeries && (
+					<a class="series" href={url(`/portfolio/${linkedProject.id}/`)}>
+						{linkedProject.data.title} 연재 <strong>{part}편</strong>
+						<span>· 전체 {seriesLength}편</span>
+					</a>
+				)
+			}
 			<h1>{title}</h1>
 			<p class="desc">{description}</p>
 			{
@@ -76,11 +102,11 @@ const linkedProject = entry && (!import.meta.env.PROD || !entry.data.draft) ? en
 			)
 		}
 
-		<nav class="pager" aria-label="이전·다음 글">
+		<nav class="pager" aria-label={inSeries ? '이전·다음 편' : '이전·다음 글'}>
 			{
 				older ? (
 					<a href={url(`/posts/${older.id}/`)}>
-						<span>← 이전 글</span>
+						<span>← {pagerLabel(older, '이전 글')}</span>
 						<strong>{older.data.title}</strong>
 					</a>
 				) : (
@@ -90,7 +116,7 @@ const linkedProject = entry && (!import.meta.env.PROD || !entry.data.draft) ? en
 			{
 				newer && (
 					<a class="next" href={url(`/posts/${newer.id}/`)}>
-						<span>다음 글 →</span>
+						<span>{pagerLabel(newer, '다음 글')} →</span>
 						<strong>{newer.data.title}</strong>
 					</a>
 				)
@@ -110,6 +136,26 @@ const linkedProject = entry && (!import.meta.env.PROD || !entry.data.draft) ? en
 		gap: 4px 12px;
 		color: var(--muted);
 		font-size: 0.88rem;
+	}
+	.series {
+		display: inline-block;
+		margin-top: 16px;
+		color: var(--text-soft);
+		font-size: 0.92rem;
+		font-weight: 600;
+		text-decoration: none;
+	}
+	.series strong {
+		color: var(--primary);
+		font-variant-numeric: tabular-nums;
+	}
+	.series span {
+		margin-left: 4px;
+		color: var(--muted);
+		font-weight: 400;
+	}
+	.series:hover {
+		color: var(--primary);
 	}
 	h1 {
 		margin: 12px 0 10px;
