@@ -30,7 +30,7 @@ updatedDate: '2026-11-10'   # 선택: 수정한 날짜
 category: study             # log(작업 기록) | study(학습 노트) | wip(중간 결과물)
 tags: ['Blender', '리깅']
 heroImage: './cover.png'    # 선택: 글 상단 대표 이미지 (공유 미리보기에도 쓰임)
-project: janggi-battle      # 선택: 포트폴리오 프로젝트와 연결
+project: janggi-battle      # 선택: 프로젝트와 연결
 draft: false                # true면 로컬에서만 보임
 ---
 ```

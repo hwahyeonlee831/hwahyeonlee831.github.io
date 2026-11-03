@@ -14,14 +14,14 @@ const posts = defineCollection({
 			category: z.enum(['log', 'study', 'wip']),
 			tags: z.array(z.string()).default([]),
 			heroImage: image().optional(),
-			// 포트폴리오 프로젝트와 연결 (src/content/projects 의 파일명)
+			// 프로젝트와 연결 (src/content/projects 의 파일명)
 			project: reference('projects').optional(),
 			// true면 로컬(npm run dev)에서만 보이고 배포 빌드에서는 빠집니다.
 			draft: z.boolean().default(false),
 		}),
 });
 
-// 포트폴리오: src/content/projects/<slug>.md 또는 <slug>/index.md
+// 프로젝트: src/content/projects/<slug>.md 또는 <slug>/index.md
 const projects = defineCollection({
 	loader: glob({ base: './src/content/projects', pattern: '**/*.{md,mdx}' }),
 	schema: ({ image }) =>

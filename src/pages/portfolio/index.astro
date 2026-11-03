@@ -6,11 +6,11 @@ import { getProjects } from '../../lib/content';
 const projects = await getProjects();
 ---
 
-<BaseLayout title="포트폴리오" description="직접 만들었거나 참여한 프로젝트 모음">
+<BaseLayout title="프로젝트" description="만들고 있는 것과 만든 것을 모아둡니다.">
 	<div class="container">
 		<header class="page-head">
-			<h1>포트폴리오</h1>
-			<p>직접 만들었거나 참여한 프로젝트 모음</p>
+			<h1>프로젝트</h1>
+			<p>만들고 있는 것과 만든 것을 모아둡니다.</p>
 		</header>
 		{
 			projects.length === 0 ? (

@@ -1,6 +1,6 @@
 # 작업 일지
 
-작업 기록 · 학습 노트 · 중간 결과물 · 포트폴리오를 올리는 개인 블로그. [Astro](https://astro.build) 정적 사이트이고 GitHub Pages로 배포됩니다.
+작업 기록 · 학습 노트 · 중간 결과물 · 프로젝트를 올리는 개인 블로그. [Astro](https://astro.build) 정적 사이트이고 GitHub Pages로 배포됩니다.
 
 ## 로컬에서 보기
 
@@ -21,8 +21,8 @@ npm run new:project -- janggi-battle          # src/content/projects/janggi-batt
 - 새로 만든 파일은 `draft: true` 로 시작합니다. 다 쓰면 그 줄을 지우거나 `false` 로 바꾸세요.
 - `category`: `log`(작업 기록) · `study`(학습 노트) · `wip`(중간 결과물)
 - 이미지는 글 폴더에 같이 넣고 `![설명](./image.png)` 로 첨부합니다.
-- 글에 `project: <프로젝트 폴더 이름>` 을 적으면 포트폴리오 상세 페이지에 "이 프로젝트의 기록"으로 모입니다.
-- 포트폴리오에서 `featured: true` 인 항목이 홈 화면에 먼저 나옵니다.
+- 글에 `project: <프로젝트 폴더 이름>` 을 적으면 프로젝트 상세 페이지에 "이 프로젝트의 기록"으로 모입니다.
+- 프로젝트 중 `featured: true` 인 항목이 홈 화면에 먼저 나옵니다.
 - 자세한 예시는 `src/content/posts/writing-guide/index.md` (draft라서 로컬에서만 보임).
 
 ## 사이트 정보 수정

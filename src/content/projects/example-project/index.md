@@ -1,6 +1,6 @@
 ---
 title: '예시 프로젝트'
-description: '포트폴리오 항목이 어떻게 보이는지 확인하는 샘플입니다. draft라서 배포되지 않습니다.'
+description: '프로젝트 항목이 어떻게 보이는지 확인하는 샘플입니다. draft라서 배포되지 않습니다.'
 period: '2026.10 – 진행 중'
 status: ongoing
 role: '기획 · 디자인 · 개발'
