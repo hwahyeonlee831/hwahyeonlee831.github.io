@@ -22,6 +22,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
+          # 러너에 캐시된 옛 24.x 대신 최신 보안 패치 버전을 받도록 강제
+          check-latest: true
           cache: npm
       - id: pages
         uses: actions/configure-pages@v6
