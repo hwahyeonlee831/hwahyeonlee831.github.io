@@ -53,16 +53,18 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`) 
 		position: sticky;
 		top: 0;
 		z-index: 10;
-		border-bottom: 1px solid var(--border);
-		background: color-mix(in srgb, var(--bg) 85%, transparent);
-		backdrop-filter: saturate(160%) blur(10px);
+		border-bottom: 1px solid var(--hairline);
+		background: var(--surface-strong);
+		box-shadow: 0 1px 0 var(--border);
+		-webkit-backdrop-filter: var(--blur);
+		backdrop-filter: var(--blur);
 	}
 	.bar {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 16px;
-		height: 60px;
+		height: 68px;
 	}
 	.brand {
 		font-weight: 800;
@@ -76,35 +78,47 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`) 
 		align-items: center;
 		gap: 4px;
 	}
+	/* 44px capsules. The selected one gets lighter glass, a 2px primary edge and bold text. */
 	nav a {
-		padding: 6px 10px;
-		border-radius: 8px;
+		display: inline-flex;
+		align-items: center;
+		height: var(--control-h);
+		padding: 0 16px;
+		border: 1px solid transparent;
+		border-radius: calc(var(--control-h) / 2);
 		color: var(--muted);
-		font-size: 0.95rem;
+		font-size: 0.94rem;
 		font-weight: 500;
 		text-decoration: none;
 		white-space: nowrap;
+		transition: background 0.15s;
 	}
 	nav a:hover {
+		background: var(--control-hover);
 		color: var(--text);
 	}
 	nav a.active {
+		border: 2px solid var(--primary);
+		padding: 0 15px;
+		background: var(--selected);
 		color: var(--text);
 		font-weight: 700;
 	}
 	.theme-toggle {
 		display: grid;
 		place-items: center;
-		width: 34px;
-		height: 34px;
+		width: var(--control-h);
+		height: var(--control-h);
 		margin-left: 4px;
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		background: var(--surface);
+		border: 1px solid var(--hairline);
+		border-radius: 50%;
+		background: var(--control);
+		box-shadow: var(--edge);
 		color: var(--muted);
 		cursor: pointer;
 	}
 	.theme-toggle:hover {
+		background: var(--control-hover);
 		color: var(--text);
 	}
 	.moon {
@@ -125,8 +139,14 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`) 
 		}
 	}
 	@media (max-width: 420px) {
+		nav {
+			gap: 0;
+		}
 		nav a {
-			padding: 6px 7px;
+			padding: 0 10px;
+		}
+		nav a.active {
+			padding: 0 9px;
 		}
 	}
 </style>

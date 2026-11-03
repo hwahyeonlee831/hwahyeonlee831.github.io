@@ -37,9 +37,16 @@ const { posts, showCategory = true } = Astro.props;
 }
 
 <style>
+	/* One glass panel holding the rows, separated by hairlines. */
 	.post-list {
 		margin: 0;
-		padding: 0;
+		padding: 6px;
+		border: 1px solid var(--hairline);
+		border-radius: var(--radius);
+		background: var(--surface);
+		box-shadow: var(--edge);
+		-webkit-backdrop-filter: var(--blur);
+		backdrop-filter: var(--blur);
 		list-style: none;
 	}
 	.post-list li + li {
@@ -47,8 +54,13 @@ const { posts, showCategory = true } = Astro.props;
 	}
 	.item {
 		display: block;
-		padding: 22px 0;
+		padding: 16px 18px;
+		border-radius: calc(var(--radius) - 6px);
 		text-decoration: none;
+		transition: background 0.15s;
+	}
+	.item:hover {
+		background: var(--control-hover);
 	}
 	.meta {
 		display: flex;
@@ -75,6 +87,6 @@ const { posts, showCategory = true } = Astro.props;
 		overflow: hidden;
 	}
 	.item:hover h3 {
-		color: var(--accent);
+		color: var(--primary);
 	}
 </style>

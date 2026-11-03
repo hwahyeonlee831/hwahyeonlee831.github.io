@@ -61,26 +61,27 @@ const tags = getAllTags(allPosts);
 		display: flex;
 		flex-wrap: wrap;
 		gap: 8px;
-		padding-bottom: 8px;
-		border-bottom: 1px solid var(--border);
+		margin-bottom: 16px;
 	}
 	.filters .chip {
+		min-height: 36px;
 		padding: 4px 14px;
 		font-size: 0.9rem;
+	}
+	.filters .chip.active {
+		padding: 3px 13px;
 	}
 	.n {
 		opacity: 0.6;
 		font-size: 0.85em;
 	}
 	.tags {
-		margin-top: 48px;
-		padding-top: 24px;
-		border-top: 1px solid var(--border);
+		margin-top: 40px;
 	}
 	.tags h2 {
 		margin: 0 0 12px;
 		color: var(--muted);
-		font-size: 0.9rem;
+		font-size: 0.875rem;
 	}
 	.tag-cloud {
 		display: flex;

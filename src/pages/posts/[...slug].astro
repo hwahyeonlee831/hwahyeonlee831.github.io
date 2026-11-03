@@ -131,7 +131,9 @@ const linkedProject = entry && (!import.meta.env.PROD || !entry.data.draft) ? en
 		display: block;
 		width: 100%;
 		margin-bottom: 40px;
+		border: 1px solid var(--hairline);
 		border-radius: var(--radius);
+		box-shadow: var(--shadow);
 	}
 	.project-link {
 		display: flex;
@@ -139,9 +141,12 @@ const linkedProject = entry && (!import.meta.env.PROD || !entry.data.draft) ? en
 		gap: 12px;
 		margin-bottom: 36px;
 		padding: 14px 18px;
-		border: 1px solid var(--border);
+		border: 1px solid var(--hairline);
 		border-radius: var(--radius);
 		background: var(--surface);
+		box-shadow: var(--edge);
+		-webkit-backdrop-filter: var(--blur);
+		backdrop-filter: var(--blur);
 		text-decoration: none;
 	}
 	.project-link .label {
@@ -153,7 +158,9 @@ const linkedProject = entry && (!import.meta.env.PROD || !entry.data.draft) ? en
 		color: var(--muted);
 	}
 	.project-link:hover {
-		border-color: var(--accent);
+		box-shadow:
+			0 0 0 2px var(--highlight),
+			var(--edge);
 	}
 	.tags {
 		display: flex;
@@ -178,7 +185,7 @@ const linkedProject = entry && (!import.meta.env.PROD || !entry.data.draft) ? en
 		text-decoration: none;
 	}
 	.pager a:hover {
-		background: var(--surface);
+		background: var(--control-hover);
 	}
 	.pager span {
 		color: var(--muted);

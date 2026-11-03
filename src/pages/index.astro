@@ -23,7 +23,9 @@ const counts = Object.fromEntries(
 					<a class="cat-card" href={url(`/posts/category/${key}/`)}>
 						<span class={`cat cat-${key}`}>{label}</span>
 						<span class="cat-desc">{description}</span>
-						<span class="cat-count">{counts[key]}개의 글</span>
+						<span class="cat-count">
+							<strong>{counts[key]}</strong> 개의 글
+						</span>
 					</a>
 				))
 			}
@@ -63,7 +65,8 @@ const counts = Object.fromEntries(
 	.hello {
 		margin: 0 0 8px;
 		color: var(--accent);
-		font-weight: 600;
+		font-size: 0.94rem;
+		font-weight: 700;
 	}
 	h1 {
 		max-width: 640px;
@@ -77,22 +80,29 @@ const counts = Object.fromEntries(
 		grid-template-columns: repeat(3, 1fr);
 		gap: 12px;
 	}
+	/* Label, then value, then unit — each in its own size so the number reads first. */
 	.cat-card {
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
 		padding: 16px 18px;
-		border: 1px solid var(--border);
+		border: 1px solid var(--hairline);
 		border-radius: var(--radius);
 		background: var(--surface);
+		box-shadow: var(--edge);
+		-webkit-backdrop-filter: var(--blur);
+		backdrop-filter: var(--blur);
 		text-decoration: none;
-		transition: border-color 0.15s;
+		transition: box-shadow 0.15s;
 	}
 	.cat-card:hover {
-		border-color: var(--muted);
+		box-shadow:
+			0 0 0 2px var(--highlight),
+			var(--edge);
 	}
 	.cat-card .cat {
-		font-size: 0.95rem;
+		font-size: 0.875rem;
+		font-weight: 700;
 	}
 	.cat-desc {
 		color: var(--text-soft);
@@ -102,7 +112,13 @@ const counts = Object.fromEntries(
 	.cat-count {
 		margin-top: 6px;
 		color: var(--muted);
-		font-size: 0.8rem;
+		font-size: 0.875rem;
+	}
+	.cat-count strong {
+		color: var(--text);
+		font-size: 1.6rem;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
 	}
 	.block {
 		margin-top: 56px;
@@ -121,9 +137,29 @@ const counts = Object.fromEntries(
 		.hero {
 			padding-top: 44px;
 		}
-		.cats,
 		.grid {
 			grid-template-columns: 1fr;
+		}
+		/* Keep the three categories on one row so projects stay near the first screen. */
+		.cats {
+			gap: 8px;
+		}
+		.cat-card {
+			padding: 12px;
+		}
+		.cat-desc {
+			display: none;
+		}
+		.cat-card .cat {
+			font-size: 0.8rem;
+			white-space: nowrap;
+		}
+		.cat-count {
+			margin-top: 2px;
+			font-size: 0.8rem;
+		}
+		.cat-count strong {
+			font-size: 1.35rem;
 		}
 	}
 </style>
