@@ -1,0 +1,45 @@
+---
+import ProjectCard from '../../components/ProjectCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getProjects } from '../../lib/content';
+
+const projects = await getProjects();
+---
+
+<BaseLayout title="포트폴리오" description="직접 만들었거나 참여한 프로젝트 모음">
+	<div class="container">
+		<header class="page-head">
+			<h1>포트폴리오</h1>
+			<p>직접 만들었거나 참여한 프로젝트 모음</p>
+		</header>
+		{
+			projects.length === 0 ? (
+				<p class="empty">곧 업로드됩니다.</p>
+			) : (
+				<div class="grid">
+					{projects.map((project) => (
+						<ProjectCard project={project} />
+					))}
+				</div>
+			)
+		}
+	</div>
+</BaseLayout>
+
+<style>
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+	}
+	@media (max-width: 860px) {
+		.grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	@media (max-width: 560px) {
+		.grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

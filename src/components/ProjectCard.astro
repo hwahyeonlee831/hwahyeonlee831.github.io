@@ -1,0 +1,103 @@
+---
+import { Image } from 'astro:assets';
+import { url, type Project } from '../lib/content';
+
+interface Props {
+	project: Project;
+}
+
+const { project } = Astro.props;
+const { title, description, period, status, tools, cover, draft } = project.data;
+---
+
+<a class="card" href={url(`/portfolio/${project.id}/`)}>
+	<div class="thumb">
+		{
+			cover ? (
+				<Image src={cover} alt="" width={720} height={450} />
+			) : (
+				<span class="placeholder" aria-hidden="true">{title.slice(0, 1)}</span>
+			)
+		}
+		{status === 'ongoing' && <span class="status">진행 중</span>}
+	</div>
+	<div class="body">
+		<h3>{title} {draft && <span class="draft-badge">DRAFT</span>}</h3>
+		<p class="desc">{description}</p>
+		<p class="meta">
+			<span>{period}</span>
+			{tools.length > 0 && <span>· {tools.slice(0, 3).join(', ')}</span>}
+		</p>
+	</div>
+</a>
+
+<style>
+	.card {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		background: var(--surface);
+		overflow: hidden;
+		text-decoration: none;
+		transition:
+			transform 0.2s,
+			box-shadow 0.2s;
+	}
+	.card:hover {
+		transform: translateY(-3px);
+		box-shadow: var(--shadow);
+	}
+	.thumb {
+		position: relative;
+		aspect-ratio: 16 / 10;
+		background: var(--code-bg);
+		overflow: hidden;
+	}
+	.thumb img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+	.placeholder {
+		display: grid;
+		place-items: center;
+		height: 100%;
+		color: var(--border);
+		font-size: 4rem;
+		font-weight: 800;
+	}
+	.status {
+		position: absolute;
+		top: 12px;
+		left: 12px;
+		padding: 2px 10px;
+		border-radius: 999px;
+		background: var(--accent);
+		color: #fff;
+		font-size: 0.75rem;
+		font-weight: 700;
+	}
+	.body {
+		padding: 16px 18px 18px;
+	}
+	h3 {
+		margin: 0 0 4px;
+		font-size: 1.08rem;
+		line-height: 1.4;
+		letter-spacing: -0.015em;
+	}
+	.desc {
+		margin: 0 0 10px;
+		color: var(--text-soft);
+		font-size: 0.92rem;
+		line-height: 1.6;
+	}
+	.meta {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.82rem;
+	}
+</style>

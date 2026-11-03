@@ -1,0 +1,90 @@
+---
+import { CATEGORIES } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getAllTags, getPosts, url, type Post } from '../lib/content';
+import PostList from './PostList.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	posts: Post[];
+	activeCategory?: string;
+	activeTag?: string;
+}
+
+const { title, description, posts, activeCategory, activeTag } = Astro.props;
+const allPosts = await getPosts();
+const tags = getAllTags(allPosts);
+---
+
+<BaseLayout title={title} description={description}>
+	<div class="container narrow">
+		<header class="page-head">
+			<h1>{title}</h1>
+			<p>{description}</p>
+		</header>
+
+		<nav class="filters" aria-label="분류">
+			<a class:list={['chip', { active: !activeCategory && !activeTag }]} href={url('/posts/')}>
+				전체 <span class="n">{allPosts.length}</span>
+			</a>
+			{
+				Object.entries(CATEGORIES).map(([key, { label }]) => (
+					<a class:list={['chip', { active: activeCategory === key }]} href={url(`/posts/category/${key}/`)}>
+						{label} <span class="n">{allPosts.filter((p) => p.data.category === key).length}</span>
+					</a>
+				))
+			}
+		</nav>
+
+		<PostList posts={posts} showCategory={!activeCategory} />
+
+		{
+			tags.length > 0 && (
+				<section class="tags">
+					<h2>태그</h2>
+					<div class="tag-cloud">
+						{tags.map(([tag, count]) => (
+							<a class:list={['chip', { active: activeTag === tag }]} href={url(`/tags/${tag}/`)}>
+								#{tag} <span class="n">{count}</span>
+							</a>
+						))}
+					</div>
+				</section>
+			)
+		}
+	</div>
+</BaseLayout>
+
+<style>
+	.filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		padding-bottom: 8px;
+		border-bottom: 1px solid var(--border);
+	}
+	.filters .chip {
+		padding: 4px 14px;
+		font-size: 0.9rem;
+	}
+	.n {
+		opacity: 0.6;
+		font-size: 0.85em;
+	}
+	.tags {
+		margin-top: 48px;
+		padding-top: 24px;
+		border-top: 1px solid var(--border);
+	}
+	.tags h2 {
+		margin: 0 0 12px;
+		color: var(--muted);
+		font-size: 0.9rem;
+	}
+	.tag-cloud {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+</style>

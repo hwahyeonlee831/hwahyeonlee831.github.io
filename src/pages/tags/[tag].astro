@@ -1,0 +1,17 @@
+---
+import PostsIndex from '../../components/PostsIndex.astro';
+import { getAllTags, getPosts } from '../../lib/content';
+
+export async function getStaticPaths() {
+	const posts = await getPosts();
+	return getAllTags(posts).map(([tag]) => ({
+		params: { tag },
+		props: { posts: posts.filter((post) => post.data.tags.includes(tag)) },
+	}));
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+---
+
+<PostsIndex title={`#${tag}`} description={`'${tag}' 태그가 달린 글 ${posts.length}개`} posts={posts} activeTag={tag} />

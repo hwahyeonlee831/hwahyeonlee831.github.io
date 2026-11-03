@@ -1,0 +1,43 @@
+---
+import { AUTHOR, SOCIAL_LINKS } from '../consts';
+import { url } from '../lib/content';
+
+const links = SOCIAL_LINKS.filter((link) => link.href);
+---
+
+<footer class="site-footer">
+	<div class="container row">
+		<span>&copy; {new Date().getFullYear()} {AUTHOR}</span>
+		<div class="links">
+			{links.map(({ label, href }) => <a href={href} target="_blank" rel="noopener">{label}</a>)}
+			<a href={url('/rss.xml')}>RSS</a>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.site-footer {
+		margin-top: 96px;
+		padding: 28px 0 40px;
+		border-top: 1px solid var(--border);
+		color: var(--muted);
+		font-size: 0.88rem;
+	}
+	.row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
+	.links {
+		display: flex;
+		gap: 16px;
+	}
+	a {
+		text-decoration: none;
+	}
+	a:hover {
+		color: var(--accent);
+	}
+</style>

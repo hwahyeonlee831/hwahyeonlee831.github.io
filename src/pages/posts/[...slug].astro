@@ -1,0 +1,202 @@
+---
+import { Image } from 'astro:assets';
+import { getEntry, render } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { CATEGORIES } from '../../consts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPosts, readingMinutes, url, type Post } from '../../lib/content';
+
+export async function getStaticPaths() {
+	const posts = await getPosts();
+	// posts are newest-first, so "newer" is the previous index
+	return posts.map((post, i) => ({
+		params: { slug: post.id },
+		props: { post, newer: posts[i - 1], older: posts[i + 1] },
+	}));
+}
+
+interface Props {
+	post: Post;
+	newer?: Post;
+	older?: Post;
+}
+
+const { post, newer, older } = Astro.props;
+const { title, description, pubDate, updatedDate, category, tags, heroImage, project, draft } = post.data;
+const { Content } = await render(post);
+const entry = project ? await getEntry(project) : undefined;
+const linkedProject = entry && (!import.meta.env.PROD || !entry.data.draft) ? entry : undefined;
+---
+
+<BaseLayout title={title} description={description} image={heroImage} type="article">
+	<article class="container narrow">
+		<header class="head">
+			<div class="meta">
+				<a class={`cat cat-${category}`} href={url(`/posts/category/${category}/`)}>{CATEGORIES[category].label}</a>
+				<FormattedDate date={pubDate} />
+				<span>· {readingMinutes(post.body)}분 읽기</span>
+				{draft && <span class="draft-badge">DRAFT · 배포되지 않음</span>}
+			</div>
+			<h1>{title}</h1>
+			<p class="desc">{description}</p>
+			{
+				updatedDate && (
+					<p class="updated">
+						마지막 수정 <FormattedDate date={updatedDate} />
+					</p>
+				)
+			}
+		</header>
+
+		{heroImage && <Image class="hero" src={heroImage} alt="" width={1440} />}
+
+		{
+			linkedProject && (
+				<a class="project-link" href={url(`/portfolio/${linkedProject.id}/`)}>
+					<span class="label">관련 프로젝트</span>
+					<strong>{linkedProject.data.title}</strong>
+					<span class="arrow">→</span>
+				</a>
+			)
+		}
+
+		<div class="prose">
+			<Content />
+		</div>
+
+		{
+			tags.length > 0 && (
+				<div class="tags">
+					{tags.map((tag) => (
+						<a class="chip" href={url(`/tags/${tag}/`)}>
+							#{tag}
+						</a>
+					))}
+				</div>
+			)
+		}
+
+		<nav class="pager" aria-label="이전·다음 글">
+			{
+				older ? (
+					<a href={url(`/posts/${older.id}/`)}>
+						<span>← 이전 글</span>
+						<strong>{older.data.title}</strong>
+					</a>
+				) : (
+					<span />
+				)
+			}
+			{
+				newer && (
+					<a class="next" href={url(`/posts/${newer.id}/`)}>
+						<span>다음 글 →</span>
+						<strong>{newer.data.title}</strong>
+					</a>
+				)
+			}
+		</nav>
+	</article>
+</BaseLayout>
+
+<style>
+	.head {
+		padding: 56px 0 32px;
+	}
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 4px 12px;
+		color: var(--muted);
+		font-size: 0.88rem;
+	}
+	h1 {
+		margin: 12px 0 10px;
+		font-size: clamp(1.7rem, 4.5vw, 2.3rem);
+		line-height: 1.35;
+		letter-spacing: -0.03em;
+	}
+	.desc {
+		margin: 0;
+		color: var(--muted);
+		font-size: 1.05rem;
+	}
+	.updated {
+		margin: 8px 0 0;
+		color: var(--muted);
+		font-size: 0.85rem;
+	}
+	.hero {
+		display: block;
+		width: 100%;
+		margin-bottom: 40px;
+		border-radius: var(--radius);
+	}
+	.project-link {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		margin-bottom: 36px;
+		padding: 14px 18px;
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		background: var(--surface);
+		text-decoration: none;
+	}
+	.project-link .label {
+		color: var(--muted);
+		font-size: 0.82rem;
+	}
+	.project-link .arrow {
+		margin-left: auto;
+		color: var(--muted);
+	}
+	.project-link:hover {
+		border-color: var(--accent);
+	}
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 48px;
+	}
+	.pager {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 12px;
+		margin-top: 40px;
+		padding-top: 24px;
+		border-top: 1px solid var(--border);
+	}
+	.pager a {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		padding: 14px 16px;
+		border-radius: var(--radius);
+		text-decoration: none;
+	}
+	.pager a:hover {
+		background: var(--surface);
+	}
+	.pager span {
+		color: var(--muted);
+		font-size: 0.82rem;
+	}
+	.pager strong {
+		font-size: 0.95rem;
+		line-height: 1.45;
+	}
+	.pager .next {
+		text-align: right;
+	}
+	@media (max-width: 640px) {
+		.head {
+			padding: 36px 0 24px;
+		}
+		.pager {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

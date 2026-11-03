@@ -1,0 +1,184 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import PostList from '../../components/PostList.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPosts, getProjects, url, type Post, type Project } from '../../lib/content';
+
+export async function getStaticPaths() {
+	const [projects, posts] = await Promise.all([getProjects(), getPosts()]);
+	return projects.map((project) => ({
+		params: { slug: project.id },
+		props: { project, related: posts.filter((post) => post.data.project?.id === project.id) },
+	}));
+}
+
+interface Props {
+	project: Project;
+	related: Post[];
+}
+
+const { project, related } = Astro.props;
+const { title, description, period, status, role, tools, cover, links, draft } = project.data;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={title} description={description} image={cover}>
+	<article class="container narrow">
+		<header class="head">
+			<a class="back" href={url('/portfolio/')}>← 포트폴리오</a>
+			<h1>
+				{title}
+				{draft && <span class="draft-badge">DRAFT · 배포되지 않음</span>}
+			</h1>
+			<p class="desc">{description}</p>
+
+			<dl class="facts">
+				<div>
+					<dt>기간</dt>
+					<dd>{period}{status === 'ongoing' && <span class="ongoing">진행 중</span>}</dd>
+				</div>
+				{
+					role && (
+						<div>
+							<dt>역할</dt>
+							<dd>{role}</dd>
+						</div>
+					)
+				}
+				{
+					tools.length > 0 && (
+						<div>
+							<dt>도구</dt>
+							<dd class="tools">
+								{tools.map((tool) => (
+									<span class="chip">{tool}</span>
+								))}
+							</dd>
+						</div>
+					)
+				}
+			</dl>
+
+			{
+				links.length > 0 && (
+					<div class="links">
+						{links.map(({ label, url: href }) => (
+							<a href={href} target="_blank" rel="noopener">
+								{label} ↗
+							</a>
+						))}
+					</div>
+				)
+			}
+		</header>
+
+		{cover && <Image class="cover" src={cover} alt={`${title} 대표 이미지`} width={1440} />}
+
+		<div class="prose">
+			<Content />
+		</div>
+
+		{
+			related.length > 0 && (
+				<section class="related">
+					<div class="section-title">
+						<h2>이 프로젝트의 기록</h2>
+					</div>
+					<PostList posts={related} />
+				</section>
+			)
+		}
+	</article>
+</BaseLayout>
+
+<style>
+	.head {
+		padding: 48px 0 32px;
+	}
+	.back {
+		color: var(--muted);
+		font-size: 0.88rem;
+		text-decoration: none;
+	}
+	.back:hover {
+		color: var(--accent);
+	}
+	h1 {
+		margin: 14px 0 8px;
+		font-size: clamp(1.7rem, 4.5vw, 2.3rem);
+		line-height: 1.35;
+		letter-spacing: -0.03em;
+	}
+	h1 .draft-badge {
+		margin-left: 8px;
+		font-size: 0.8rem;
+	}
+	.desc {
+		margin: 0 0 24px;
+		color: var(--muted);
+		font-size: 1.05rem;
+	}
+	.facts {
+		display: grid;
+		gap: 10px;
+		margin: 0;
+		padding: 18px 20px;
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		background: var(--surface);
+		font-size: 0.92rem;
+	}
+	.facts div {
+		display: grid;
+		grid-template-columns: 56px 1fr;
+		gap: 12px;
+		align-items: baseline;
+	}
+	dt {
+		color: var(--muted);
+	}
+	dd {
+		margin: 0;
+	}
+	.tools {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+	.ongoing {
+		margin-left: 8px;
+		color: var(--accent);
+		font-size: 0.82rem;
+		font-weight: 700;
+	}
+	.links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 16px;
+	}
+	.links a {
+		padding: 6px 14px;
+		border-radius: 8px;
+		background: var(--text);
+		color: var(--bg);
+		font-size: 0.88rem;
+		font-weight: 600;
+		text-decoration: none;
+	}
+	.links a:hover {
+		background: var(--accent);
+	}
+	.cover {
+		display: block;
+		width: 100%;
+		margin-bottom: 40px;
+		border-radius: var(--radius);
+	}
+	.related {
+		margin-top: 64px;
+		padding-top: 24px;
+		border-top: 1px solid var(--border);
+	}
+</style>

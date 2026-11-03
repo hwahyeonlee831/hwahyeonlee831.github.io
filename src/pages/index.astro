@@ -1,0 +1,129 @@
+---
+import PostList from '../components/PostList.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { AUTHOR, CATEGORIES, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPosts, getProjects, url } from '../lib/content';
+
+const posts = await getPosts();
+const projects = await getProjects();
+const featured = (projects.some((p) => p.data.featured) ? projects.filter((p) => p.data.featured) : projects).slice(0, 3);
+const counts = Object.fromEntries(
+	Object.keys(CATEGORIES).map((key) => [key, posts.filter((p) => p.data.category === key).length]),
+);
+---
+
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+	<section class="container hero">
+		<p class="hello">안녕하세요, {AUTHOR}입니다.</p>
+		<h1>{SITE_DESCRIPTION}</h1>
+		<div class="cats">
+			{
+				Object.entries(CATEGORIES).map(([key, { label, description }]) => (
+					<a class="cat-card" href={url(`/posts/category/${key}/`)}>
+						<span class={`cat cat-${key}`}>{label}</span>
+						<span class="cat-desc">{description}</span>
+						<span class="cat-count">{counts[key]}개의 글</span>
+					</a>
+				))
+			}
+		</div>
+	</section>
+
+	{
+		featured.length > 0 && (
+			<section class="container block">
+				<div class="section-title">
+					<h2>포트폴리오</h2>
+					<a href={url('/portfolio/')}>전체 보기 →</a>
+				</div>
+				<div class="grid">
+					{featured.map((project) => (
+						<ProjectCard project={project} />
+					))}
+				</div>
+			</section>
+		)
+	}
+
+	<section class="container block">
+		<div class="section-title">
+			<h2>최근 글</h2>
+			<a href={url('/posts/')}>전체 보기 →</a>
+		</div>
+		<PostList posts={posts.slice(0, 6)} />
+	</section>
+</BaseLayout>
+
+<style>
+	.hero {
+		padding-top: 72px;
+		padding-bottom: 24px;
+	}
+	.hello {
+		margin: 0 0 8px;
+		color: var(--accent);
+		font-weight: 600;
+	}
+	h1 {
+		max-width: 640px;
+		margin: 0 0 36px;
+		font-size: clamp(1.7rem, 4.2vw, 2.5rem);
+		line-height: 1.35;
+		letter-spacing: -0.03em;
+	}
+	.cats {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 12px;
+	}
+	.cat-card {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding: 16px 18px;
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		background: var(--surface);
+		text-decoration: none;
+		transition: border-color 0.15s;
+	}
+	.cat-card:hover {
+		border-color: var(--muted);
+	}
+	.cat-card .cat {
+		font-size: 0.95rem;
+	}
+	.cat-desc {
+		color: var(--text-soft);
+		font-size: 0.88rem;
+		line-height: 1.55;
+	}
+	.cat-count {
+		margin-top: 6px;
+		color: var(--muted);
+		font-size: 0.8rem;
+	}
+	.block {
+		margin-top: 56px;
+	}
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+	}
+	@media (max-width: 860px) {
+		.grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	@media (max-width: 640px) {
+		.hero {
+			padding-top: 44px;
+		}
+		.cats,
+		.grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

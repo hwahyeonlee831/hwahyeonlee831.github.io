@@ -1,0 +1,45 @@
+---
+import { AUTHOR, SITE_DESCRIPTION, SOCIAL_LINKS } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const links = SOCIAL_LINKS.filter((link) => link.href);
+---
+
+<BaseLayout title="소개" description={`${AUTHOR} 소개`}>
+	<div class="container narrow">
+		<header class="page-head">
+			<h1>{AUTHOR}</h1>
+			<p>{SITE_DESCRIPTION}</p>
+		</header>
+
+		<!-- 이 페이지는 src/pages/about.astro 에서 자유롭게 수정하세요. -->
+		<div class="prose">
+			<h2>하는 일</h2>
+			<p>어떤 일을 하고 있는지, 어떤 분야에 관심이 있는지 적어주세요.</p>
+
+			<h2>이 블로그에는</h2>
+			<ul>
+				<li><strong>작업 기록</strong> — 프로젝트를 진행하며 남긴 과정과 회고</li>
+				<li><strong>학습 노트</strong> — 업무와 공부 중에 배운 것 정리</li>
+				<li><strong>중간 결과물</strong> — 아직 진행 중인 작업물 공유</li>
+			</ul>
+
+			{
+				links.length > 0 && (
+					<>
+						<h2>연락처</h2>
+						<ul>
+							{links.map(({ label, href }) => (
+								<li>
+									<a href={href} target="_blank" rel="noopener">
+										{label}
+									</a>
+								</li>
+							))}
+						</ul>
+					</>
+				)
+			}
+		</div>
+	</div>
+</BaseLayout>

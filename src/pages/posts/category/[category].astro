@@ -1,0 +1,15 @@
+---
+import PostsIndex from '../../../components/PostsIndex.astro';
+import { CATEGORIES, type CategoryKey } from '../../../consts';
+import { getPosts } from '../../../lib/content';
+
+export function getStaticPaths() {
+	return Object.keys(CATEGORIES).map((category) => ({ params: { category } }));
+}
+
+const category = Astro.params.category as CategoryKey;
+const { label, description } = CATEGORIES[category];
+const posts = (await getPosts()).filter((post) => post.data.category === category);
+---
+
+<PostsIndex title={label} description={description} posts={posts} activeCategory={category} />

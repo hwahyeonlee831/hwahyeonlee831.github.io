@@ -1,0 +1,8 @@
+---
+import PostsIndex from '../../components/PostsIndex.astro';
+import { getPosts } from '../../lib/content';
+
+const posts = await getPosts();
+---
+
+<PostsIndex title="글" description="작업 기록, 학습 노트, 중간 결과물을 모아둡니다." posts={posts} />
