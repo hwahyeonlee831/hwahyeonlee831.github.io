@@ -46,11 +46,11 @@ order: 100
 draft: true
 ---
 
-## 개요
+## Overview
 
-## 주요 작업
+## Highlights
 
-## 회고
+## Retrospective
 `,
 };
 
