@@ -10,6 +10,11 @@ export default defineConfig({
 	site: process.env.SITE_URL || 'http://localhost:4321',
 	base: process.env.BASE_PATH || '/',
 	trailingSlash: 'ignore',
+	// The section is labelled "프로젝트" but its public URL stays /portfolio/.
+	redirects: {
+		'/projects': '/portfolio',
+		'/projects/[...slug]': '/portfolio/[...slug]',
+	},
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		shikiConfig: {
