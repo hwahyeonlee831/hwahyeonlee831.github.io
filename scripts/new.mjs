@@ -1,4 +1,5 @@
 // Usage: npm run new:post -- <slug> | npm run new:project -- <slug>
+// New drafts start in review/ (gitignored, dev-only); `npm run approve -- <slug>` publishes them.
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -13,10 +14,13 @@ if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) {
 }
 
 const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
-const dir = join('src/content', kind === 'post' ? 'posts' : 'projects', slug);
-if (existsSync(dir)) {
-	console.error(`이미 있습니다: ${dir}`);
-	process.exit(1);
+const collection = kind === 'post' ? 'posts' : 'projects';
+const dir = join('review', collection, slug);
+for (const existing of [dir, join('src/content', collection, slug)]) {
+	if (existsSync(existing)) {
+		console.error(`이미 있습니다: ${existing}`);
+		process.exit(1);
+	}
 }
 
 const templates = {
@@ -57,4 +61,5 @@ draft: true
 mkdirSync(dir, { recursive: true });
 writeFileSync(join(dir, 'index.md'), templates[kind]);
 console.log(`만들었습니다: ${join(dir, 'index.md')}`);
-console.log('다 쓰면 draft: true 를 지워야 배포됩니다.');
+console.log('검토용 폴더라 저장소에 올라가지 않고 npm run dev 에서만 보입니다.');
+console.log(`검토가 끝나면: npm run approve -- ${slug}`);

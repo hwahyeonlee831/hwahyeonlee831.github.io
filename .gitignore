@@ -26,3 +26,6 @@ pnpm-debug.log*
 # local tooling
 .claude/
 CLAUDE.md
+
+# 검토 중인 초안 (로컬 전용, 절대 커밋하지 않음)
+review/
